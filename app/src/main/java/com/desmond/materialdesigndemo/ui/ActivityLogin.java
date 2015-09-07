@@ -1,7 +1,9 @@
 package com.desmond.materialdesigndemo.ui;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.apache.http.Header;
+
 import com.desmond.materialdesigndemo.R;
 import com.desmond.materialdesigndemo.ui.activity.MainActivity;
 import com.facebook.AccessToken;
@@ -30,6 +34,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,13 +55,18 @@ public class ActivityLogin extends AppCompatActivity {
     private CallbackManager callbackManager;
     private SessionManager session;
     private Context mContext;
-    private ProfileTracker mprofileTraer;
+    private ProfileTracker mprofileTraker;
     private AccessTokenTracker mAccessTokenTracker;
-    @InjectView(com.desmond.materialdesigndemo.R.id.input_email)    EditText _emailText;
-    @InjectView(com.desmond.materialdesigndemo.R.id.input_password) EditText _passwordText;
-    @InjectView(com.desmond.materialdesigndemo.R.id.btn_login)      Button _loginButton;
-    @InjectView(com.desmond.materialdesigndemo.R.id.link_signup)    TextView _signupLink;
-    private String facebook_id,f_name, m_name, l_name, gender, profile_image, full_name, email_id;
+    @InjectView(com.desmond.materialdesigndemo.R.id.input_email)
+    EditText _emailText;
+    @InjectView(com.desmond.materialdesigndemo.R.id.input_password)
+    EditText _passwordText;
+    @InjectView(com.desmond.materialdesigndemo.R.id.btn_login)
+    Button _loginButton;
+    @InjectView(com.desmond.materialdesigndemo.R.id.link_signup)
+    TextView _signupLink;
+    private String facebook_id, f_name, m_name, l_name, gender, profile_image, full_name, email_id;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,8 +77,8 @@ public class ActivityLogin extends AppCompatActivity {
         mContext = this;
         final ProgressDialog progressDialog = new ProgressDialog(ActivityLogin.this,
                 R.style.Base_Theme_AppCompat_Dialog_Alert);
-        _loginButton.setOnClickListener(new View.OnClickListener() {
 
+        _loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 login();
@@ -86,12 +96,9 @@ public class ActivityLogin extends AppCompatActivity {
         });
 
 
-
-      //  info = (TextView) findViewById(R.id.info);
+        //  info = (TextView) findViewById(R.id.info);
         loginButton = (LoginButton) findViewById(R.id.fb_login);
-
         loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends"));
-
         callbackManager = CallbackManager.Factory.create();
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -108,7 +115,6 @@ public class ActivityLogin extends AppCompatActivity {
                                 Log.i("LoginActivity", response.toString());
                                 System.out.print(response.toString());
                                 try {
-                                   // GraphObject graphObject = response.getGraphObject();
 
                                     Log.v("Name:", response.getJSONObject().get("name").toString());
                                     Toast.makeText(getApplicationContext(), "Welcome " + response.getJSONObject().get("name").toString() +
@@ -146,23 +152,38 @@ public class ActivityLogin extends AppCompatActivity {
             }
         });
 
-        AccessTokenTracker tracker = new AccessTokenTracker(){
+        mAccessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken accessToken, AccessToken accessToken1) {
-
+                updateWithToken(accessToken1);
             }
         };
 
-        ProfileTracker Usertrack = new ProfileTracker() {
+        mprofileTraker = new ProfileTracker() {
             @Override
-            protected void onCurrentProfileChanged(Profile  old, Profile newprofi ) {
+            protected void onCurrentProfileChanged(Profile old, Profile newprofi) {
 
             }
         };
-        mprofileTraer.startTracking();
+        mprofileTraker.startTracking();
         mAccessTokenTracker.startTracking();
+    }
 
+    private void updateWithToken(AccessToken currentAccessToken) {
 
+        if (currentAccessToken != null) {
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    Intent i = new Intent(ActivityLogin.this, MainActivity.class);
+                    startActivity(i);
+
+                    finish();
+                }
+            }, 5000);
+        } else {
+        }
     }
 
     @Override
@@ -173,7 +194,7 @@ public class ActivityLogin extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mprofileTraer.stopTracking();
+        mprofileTraker.stopTracking();
         mAccessTokenTracker.stopTracking();
     }
 
@@ -211,6 +232,7 @@ public class ActivityLogin extends AppCompatActivity {
         checkLogin(email, password);
 
     }
+
     private void checkLogin(final String email, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
@@ -270,8 +292,9 @@ public class ActivityLogin extends AppCompatActivity {
         });
 
         // Adding request to request queue
-     //   AppController.getInstance().addToRequestQueue(strReq, tag_string_req, mContext);
+        //   AppController.getInstance().addToRequestQueue(strReq, tag_string_req, mContext);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

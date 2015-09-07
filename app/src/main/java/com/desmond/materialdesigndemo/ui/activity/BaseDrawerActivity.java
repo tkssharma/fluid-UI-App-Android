@@ -126,10 +126,7 @@ public class BaseDrawerActivity extends BaseActivity {
             return true;
         }
 
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }

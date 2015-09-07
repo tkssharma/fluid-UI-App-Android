@@ -22,143 +22,142 @@ import com.squareup.picasso.Picasso;
 
 public class UserProfileActivity extends BaseActivity implements RevealBackgroundView.OnStateChangeListener {
 
-public static final String ARG_REVEAL_START_LOCATION = "reveal_start_location";
+    public static final String ARG_REVEAL_START_LOCATION = "reveal_start_location";
 
-private static final int USER_OPTIONS_ANIMATION_DELAY = 300;
-private static final Interpolator INTERPOLATOR = new DecelerateInterpolator();
+    private static final int USER_OPTIONS_ANIMATION_DELAY = 300;
+    private static final Interpolator INTERPOLATOR = new DecelerateInterpolator();
 
-RevealBackgroundView mRevealBackground;
+    RevealBackgroundView mRevealBackground;
 
-RecyclerView mRvUserProfile;
-TabLayout mTlUserProfileTabs;
-TextView vUserDetails;
-TextView FirstName;
-TextView LastName;
-ImageView mIvUserProfilePhoto;
+    RecyclerView mRvUserProfile;
+    TabLayout mTlUserProfileTabs;
+    TextView vUserDetails;
+    TextView FirstName;
+    TextView LastName;
+    ImageView mIvUserProfilePhoto;
 
-Button mBtnFollow;
+    Button mBtnFollow;
 
-View mVUserDetails;
-View mVUserStats;
-View mVUserProfileRoot;
+    View mVUserDetails;
+    View mVUserStats;
+    View mVUserProfileRoot;
 
-private int mAvatarSize;
-private String mProfilePhoto;
-
-
-public static void startUserProfileFromLocation(int[] startingLocation, BaseActivity startingActivity) {
-    Intent intent = new Intent(startingActivity, UserProfileActivity.class);
-    intent.putExtra(ARG_REVEAL_START_LOCATION, startingLocation);
-    startingActivity.startActivity(intent);
-}
-
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_user_profile);
-
-    mAvatarSize= getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
-    mProfilePhoto = getString(R.string.user_profile_photo);
-    mIvUserProfilePhoto = (ImageView) findViewById(R.id.ivUserProfilePhoto);
-    Picasso.with(this)
-            .load(new fbUser().getImageUri().toString())
-            .resize(mAvatarSize, mAvatarSize)
-            .placeholder(R.drawable.img_circle_placeholder)
-            .transform(new CircleTransformation())
-            .centerCrop()
-            .into(mIvUserProfilePhoto);
+    private int mAvatarSize;
+    private String mProfilePhoto;
 
 
-    mVUserProfileRoot = findViewById(R.id.vUserProfileRoot);
-    mVUserDetails = findViewById(R.id.vUserDetails);
-
-
-    FirstName = (TextView)findViewById(R.id.FirstName);
-    LastName =   (TextView)findViewById(R.id.LastName);
-    FirstName.setText(new fbUser().getName());
-    LastName.setText(new fbUser().getEmail());
-
-
-
-    setupToolbar();
-    setupTabs();
-    setupUserProfileGrid();
-    setupRevealBackground(savedInstanceState);
-}
-
-private void setupTabs() {
-    mTlUserProfileTabs = (TabLayout) findViewById(R.id.tlUserProfileTabs);
-
-    mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_grid_on_white));
-    mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_list_white));
-    mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_place_white));
-    mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_label_white));
-}
-
-private void setupRevealBackground(Bundle savedInstanceState) {
-    mRevealBackground = (RevealBackgroundView) findViewById(R.id.vRevealBackground);
-    mRevealBackground.setOnStateChangeListener(this);
-
-    if (savedInstanceState == null) {
-        final int[] startingLocation = getIntent().getIntArrayExtra(ARG_REVEAL_START_LOCATION);
-        mRevealBackground.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                mRevealBackground.getViewTreeObserver().removeOnPreDrawListener(this);
-                mRevealBackground.startFromLocation(startingLocation);
-                return true;
-            }
-        });
-    } else {
-
-        mRevealBackground.setToFinishedFrame();
+    public static void startUserProfileFromLocation(int[] startingLocation, BaseActivity startingActivity) {
+        Intent intent = new Intent(startingActivity, UserProfileActivity.class);
+        intent.putExtra(ARG_REVEAL_START_LOCATION, startingLocation);
+        startingActivity.startActivity(intent);
     }
-}
 
-private void setupUserProfileGrid() {
-    mRvUserProfile = (RecyclerView) findViewById(R.id.rvUserProfile);
-    final StaggeredGridLayoutManager layoutMgr =
-            new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
-    mRvUserProfile.setLayoutManager(layoutMgr);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_profile);
 
-}
+        mAvatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
+        mProfilePhoto = getString(R.string.user_profile_photo);
+        mIvUserProfilePhoto = (ImageView) findViewById(R.id.ivUserProfilePhoto);
+        Picasso.with(this)
+                .load(new fbUser().getImageUri().toString())
+                .resize(mAvatarSize, mAvatarSize)
+                .placeholder(R.drawable.img_circle_placeholder)
+                .transform(new CircleTransformation())
+                .centerCrop()
+                .into(mIvUserProfilePhoto);
 
-@Override
-public void onStateChange(int state) {
-    if (RevealBackgroundView.STATE_FINISHED == state) {
-        // Finished reveal animation
-        mRvUserProfile.setVisibility(View.VISIBLE);
-        mVUserProfileRoot.setVisibility(View.VISIBLE);
-        mTlUserProfileTabs.setVisibility(View.VISIBLE);
+
+        mVUserProfileRoot = findViewById(R.id.vUserProfileRoot);
+        mVUserDetails = findViewById(R.id.vUserDetails);
 
 
-        animateUserProfileOptions();
-        animateUserProfileHeader();
-    } else {
-        // Reveal animation has started
-        mRvUserProfile.setVisibility(View.INVISIBLE);
-        mVUserProfileRoot.setVisibility(View.INVISIBLE);
-        mTlUserProfileTabs.setVisibility(View.INVISIBLE);
+        FirstName = (TextView) findViewById(R.id.FirstName);
+        LastName = (TextView) findViewById(R.id.LastName);
+        FirstName.setText(new fbUser().getName());
+        LastName.setText(new fbUser().getEmail());
+
+
+        setupToolbar();
+        setupTabs();
+        setupUserProfileGrid();
+        setupRevealBackground(savedInstanceState);
     }
-}
 
-private void animateUserProfileOptions() {
-    mTlUserProfileTabs.setTranslationY(-mTlUserProfileTabs.getTranslationY());
-    ViewCompat.animate(mTlUserProfileTabs)
-            .translationY(0F)
-            .setDuration(300)
-            .setStartDelay(USER_OPTIONS_ANIMATION_DELAY)
-            .setInterpolator(INTERPOLATOR);
-}
+    private void setupTabs() {
+        mTlUserProfileTabs = (TabLayout) findViewById(R.id.tlUserProfileTabs);
 
-private void animateUserProfileHeader() {
-    mVUserProfileRoot.setTranslationY(-mVUserProfileRoot.getHeight());
-    mIvUserProfilePhoto.setTranslationY(-mIvUserProfilePhoto.getHeight());
-    mVUserDetails.setTranslationY(-mVUserDetails.getHeight());
+        mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_grid_on_white));
+        mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_list_white));
+        mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_place_white));
+        mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_label_white));
+    }
 
-    ViewCompat.animate(mVUserProfileRoot).translationY(0F).setDuration(300).setInterpolator(INTERPOLATOR);
-    ViewCompat.animate(mIvUserProfilePhoto).translationY(0F).setDuration(300).setStartDelay(100).setInterpolator(INTERPOLATOR);
-    ViewCompat.animate(mVUserDetails).translationY(0F).setDuration(300).setStartDelay(200).setInterpolator(INTERPOLATOR);
-    ViewCompat.animate(mVUserStats).alpha(1F).setDuration(200).setStartDelay(400).setInterpolator(INTERPOLATOR);
-}
+    private void setupRevealBackground(Bundle savedInstanceState) {
+        mRevealBackground = (RevealBackgroundView) findViewById(R.id.vRevealBackground);
+        mRevealBackground.setOnStateChangeListener(this);
+
+        if (savedInstanceState == null) {
+            final int[] startingLocation = getIntent().getIntArrayExtra(ARG_REVEAL_START_LOCATION);
+            mRevealBackground.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    mRevealBackground.getViewTreeObserver().removeOnPreDrawListener(this);
+                    mRevealBackground.startFromLocation(startingLocation);
+                    return true;
+                }
+            });
+        } else {
+
+            mRevealBackground.setToFinishedFrame();
+        }
+    }
+
+    private void setupUserProfileGrid() {
+        mRvUserProfile = (RecyclerView) findViewById(R.id.rvUserProfile);
+        final StaggeredGridLayoutManager layoutMgr =
+                new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+        mRvUserProfile.setLayoutManager(layoutMgr);
+
+    }
+
+    @Override
+    public void onStateChange(int state) {
+        if (RevealBackgroundView.STATE_FINISHED == state) {
+            // Finished reveal animation
+            mRvUserProfile.setVisibility(View.VISIBLE);
+            mVUserProfileRoot.setVisibility(View.VISIBLE);
+            mTlUserProfileTabs.setVisibility(View.VISIBLE);
+
+
+            animateUserProfileOptions();
+            animateUserProfileHeader();
+        } else {
+            // Reveal animation has started
+            mRvUserProfile.setVisibility(View.INVISIBLE);
+            mVUserProfileRoot.setVisibility(View.INVISIBLE);
+            mTlUserProfileTabs.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void animateUserProfileOptions() {
+        mTlUserProfileTabs.setTranslationY(-mTlUserProfileTabs.getTranslationY());
+        ViewCompat.animate(mTlUserProfileTabs)
+                .translationY(0F)
+                .setDuration(300)
+                .setStartDelay(USER_OPTIONS_ANIMATION_DELAY)
+                .setInterpolator(INTERPOLATOR);
+    }
+
+    private void animateUserProfileHeader() {
+        mVUserProfileRoot.setTranslationY(-mVUserProfileRoot.getHeight());
+        mIvUserProfilePhoto.setTranslationY(-mIvUserProfilePhoto.getHeight());
+        mVUserDetails.setTranslationY(-mVUserDetails.getHeight());
+
+        ViewCompat.animate(mVUserProfileRoot).translationY(0F).setDuration(300).setInterpolator(INTERPOLATOR);
+        ViewCompat.animate(mIvUserProfilePhoto).translationY(0F).setDuration(300).setStartDelay(100).setInterpolator(INTERPOLATOR);
+        ViewCompat.animate(mVUserDetails).translationY(0F).setDuration(300).setStartDelay(200).setInterpolator(INTERPOLATOR);
+        ViewCompat.animate(mVUserStats).alpha(1F).setDuration(200).setStartDelay(400).setInterpolator(INTERPOLATOR);
+    }
 }
