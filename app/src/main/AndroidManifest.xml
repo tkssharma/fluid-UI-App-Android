@@ -60,25 +60,9 @@
             android:label="@string/title_activity_base" >
         </activity>
         <activity
-            android:name=".ui.activity.CommentsActivity"
-            android:label="@string/title_activity_comments"
-            android:theme="@style/AppTheme.TransparentActivity" >
-        </activity>
-        <activity
             android:name=".ui.activity.UserProfileActivity"
             android:label="@string/title_activity_user_profile"
             android:theme="@style/AppTheme.TransparentActivity" >
-        </activity>
-        <activity
-            android:name=".ui.activity.TakePhotoActivity"
-            android:label="@string/title_activity_take_photo"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.TransparentActivity.FullScreen" >
-        </activity>
-        <activity
-            android:name=".ui.activity.PublishActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_publish" >
         </activity>
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=

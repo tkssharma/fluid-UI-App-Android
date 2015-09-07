@@ -2,7 +2,6 @@ package com.desmond.materialdesigndemo.ui;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.media.tv.TvInputService;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +22,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
-import com.facebook.GraphRequestAsyncTask;
 import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
@@ -52,6 +50,8 @@ public class ActivityLogin extends AppCompatActivity {
     private CallbackManager callbackManager;
     private SessionManager session;
     private Context mContext;
+    private ProfileTracker mprofileTraer;
+    private AccessTokenTracker mAccessTokenTracker;
     @InjectView(com.desmond.materialdesigndemo.R.id.input_email)    EditText _emailText;
     @InjectView(com.desmond.materialdesigndemo.R.id.input_password) EditText _passwordText;
     @InjectView(com.desmond.materialdesigndemo.R.id.btn_login)      Button _loginButton;
@@ -89,10 +89,10 @@ public class ActivityLogin extends AppCompatActivity {
 
       //  info = (TextView) findViewById(R.id.info);
         loginButton = (LoginButton) findViewById(R.id.fb_login);
-        loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
+
+        loginButton.setReadPermissions(Arrays.asList("public_profile, email, user_birthday, user_friends"));
+
         callbackManager = CallbackManager.Factory.create();
-
-
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -105,13 +105,22 @@ public class ActivityLogin extends AppCompatActivity {
                                     JSONObject object,
                                     GraphResponse response) {
 
-                                Log.v("LoginActivity", response.toString());
-
+                                Log.i("LoginActivity", response.toString());
+                                System.out.print(response.toString());
                                 try {
+                                   // GraphObject graphObject = response.getGraphObject();
+
                                     Log.v("Name:", response.getJSONObject().get("name").toString());
                                     Toast.makeText(getApplicationContext(), "Welcome " + response.getJSONObject().get("name").toString() +
                                                     "\n" + response.getJSONObject().get("email").toString(),
                                             Toast.LENGTH_LONG).show();
+                                    fbUser user = new fbUser();
+                                    user.setEmail(response.getJSONObject().get("email").toString());
+                                    user.setName(response.getJSONObject().get("name").toString());
+                                    // set profile information
+                                    String id = response.getJSONObject().get("id").toString();
+                                    user.setImageUri(" https://graph.facebook.com/" + id + "/picture?type=small");
+                                    startActivity(new Intent(ActivityLogin.this, MainActivity.class));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -136,9 +145,37 @@ public class ActivityLogin extends AppCompatActivity {
                 Toast.makeText(mContext, "Facebook error!", Toast.LENGTH_LONG).show();
             }
         });
+
+        AccessTokenTracker tracker = new AccessTokenTracker(){
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken accessToken, AccessToken accessToken1) {
+
+            }
+        };
+
+        ProfileTracker Usertrack = new ProfileTracker() {
+            @Override
+            protected void onCurrentProfileChanged(Profile  old, Profile newprofi ) {
+
+            }
+        };
+        mprofileTraer.startTracking();
+        mAccessTokenTracker.startTracking();
+
+
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mprofileTraer.stopTracking();
+        mAccessTokenTracker.stopTracking();
+    }
 
     public void login() {
         Log.d(TAG, "Login");
@@ -263,6 +300,8 @@ public class ActivityLogin extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
 

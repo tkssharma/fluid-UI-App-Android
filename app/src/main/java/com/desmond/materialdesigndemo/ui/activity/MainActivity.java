@@ -13,12 +13,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.desmond.materialdesigndemo.R;
 import com.desmond.materialdesigndemo.ui.Utils;
 import com.desmond.materialdesigndemo.ui.adapter.FeedAdapter;
+import com.desmond.materialdesigndemo.ui.fbUser;
 import com.desmond.materialdesigndemo.ui.view.FeedContextMenu;
 import com.desmond.materialdesigndemo.ui.view.FeedContextMenuManager;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends BaseDrawerActivity
         implements FeedAdapter.OnFeedItemClickListener, FeedContextMenu.OnFeedContextMenuItemClickListener {
@@ -30,6 +34,8 @@ public class MainActivity extends BaseDrawerActivity
 
     CoordinatorLayout mClContent;
 
+    TextView user_name;
+    ImageView profile;
     FloatingActionButton mFabCreate;
 
     RecyclerView mRvFeed;
@@ -72,6 +78,12 @@ public class MainActivity extends BaseDrawerActivity
         } else {
             mFeedAdapter.updateItems();
         }
+
+        user_name = (TextView)findViewById(R.id.name);
+
+        user_name.setText(new fbUser().getName());
+
+
     }
 
     @Override
@@ -113,18 +125,10 @@ public class MainActivity extends BaseDrawerActivity
         });
     }
 
+
     @Override
     public void onCommentsClick(View view, int position) {
-        final Intent intent = new Intent(this, CommentsActivity.class);
 
-        // Get location on screen for tapped view
-        int[] startingLocation = new int[2];
-        view.getLocationOnScreen(startingLocation);
-        intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
-
-        startActivity(intent);
-        // Disable enter transition for new Activity and exit animation for MainActivity
-        overridePendingTransition(0, 0);
     }
 
     @Override
@@ -207,7 +211,7 @@ public class MainActivity extends BaseDrawerActivity
         int[] startingLocation = new int[2];
         view.getLocationOnScreen(startingLocation);
         startingLocation[0] += view.getWidth() / 2;
-        TakePhotoActivity.startCameraFromLocation(startingLocation, MainActivity.this);
+       // TakePhotoActivity.startCameraFromLocation(startingLocation, MainActivity.this);
         overridePendingTransition(0, 0);
     }
 }

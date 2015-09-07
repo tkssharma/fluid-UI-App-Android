@@ -72,14 +72,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_feed, parent, false);
         final CellFeedViewHolder holder = new CellFeedViewHolder(view);
         switch (viewType) {
-            case VIEW_TYPE_DEFAULT:{
-                holder.btnComments.setOnClickListener(this);
-                holder.btnLike.setOnClickListener(this);
-                holder.ivFeedCenter.setOnClickListener(this);
-                holder.btnMore.setOnClickListener(this);
-                holder.ivUserProfile.setOnClickListener(this);
-                break;
-            }
+
             case VIEW_TYPE_LOADER: {
                 View bgView = new View(parent.getContext());
                 bgView.setLayoutParams(new FrameLayout.LayoutParams(
@@ -137,13 +130,12 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             holder.ivFeedCenter.setImageResource(R.drawable.img_feed_center_2);
             holder.ivFeedBottom.setImageResource(R.drawable.img_feed_bottom_2);
         }
-        updateLikesCounter(holder, false);
+
         updateHeartButton(holder, false);
 
-        holder.btnComments.setTag(position);
+
         holder.ivFeedCenter.setTag(holder);
-        holder.btnLike.setTag(holder);
-        holder.btnMore.setTag(position);
+
 
         if (mLikeAnimations.containsKey(holder)) {
             mLikeAnimations.get(holder).cancel();
@@ -219,31 +211,12 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onClick(View v) {
         final int viewId = v.getId();
         switch (viewId) {
-            case R.id.btnComments: {
-                if (mOnFeedItemClickListener != null) {
-                    mOnFeedItemClickListener.onCommentsClick(v, (Integer) v.getTag());
-                }
-                break;
-            }
-            case R.id.btnLike: {
-                CellFeedViewHolder holder = (CellFeedViewHolder) v.getTag();
-                boolean isLiked = mLikedPositions.get(holder.getAdapterPosition(), false);
-                mLikedPositions.put(holder.getAdapterPosition(), !isLiked);
-                updateLikesCounter(holder, true);
-                updateHeartButton(holder, true);
-                break;
-            }
-            case R.id.btnMore: {
-                if (mOnFeedItemClickListener != null) {
-                    mOnFeedItemClickListener.onMoreClick(v, (Integer) v.getTag());
-                }
-                break;
-            }
+
             case R.id.ivFeedCenter: {
                 CellFeedViewHolder holder = (CellFeedViewHolder) v.getTag();
                 boolean isLiked = mLikedPositions.get(holder.getAdapterPosition(), false);
                 mLikedPositions.put(holder.getAdapterPosition(), !isLiked);
-                updateLikesCounter(holder, true);
+
                 animatePhotoLike(holder);
                 updateHeartButton(holder, false);
                 break;
@@ -272,85 +245,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return false;
     }
 
-    private void updateLikesCounter(CellFeedViewHolder holder, boolean animated) {
-        int currentLikesCount = mLikesCount.get(holder.getAdapterPosition());
-        boolean isLiked = mLikedPositions.get(holder.getAdapterPosition(), false);
-        if (isLiked) {
-            // Increase like
-            mLikesCount.put(holder.getAdapterPosition(), ++currentLikesCount);
-        } else {
-            // Decrease like
-            mLikesCount.put(holder.getAdapterPosition(), --currentLikesCount);
-        }
 
-        String likesCountText = holder.itemView.getContext().getResources().getQuantityString(
-                R.plurals.likes_count, currentLikesCount, currentLikesCount
-        );
-
-        if (animated) {
-            // Update with animation
-            holder.tsLikesCounter.setText(likesCountText);
-        } else {
-            // Update with no animation
-            holder.tsLikesCounter.setCurrentText(likesCountText);
-        }
-    }
 
     private void updateHeartButton(final CellFeedViewHolder holder, boolean animated) {
         boolean isLiked = mLikedPositions.get(holder.getAdapterPosition(), false);
-        if (isLiked) {
-            // Increase like
-            if (animated) {
-                if (!mLikeAnimations.containsKey(holder)) {
-                    AnimatorSet animatorSet = new AnimatorSet();
-                    mLikeAnimations.put(holder, animatorSet);
 
-                    // Animate rotation
-                    ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(holder.btnLike, "rotation", 0F, 360F);
-                    rotationAnim.setDuration(300);
-                    rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
-
-                    // Animate bounce X and Y
-                    ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(holder.btnLike, "scaleX", 0.2F, 1F);
-                    bounceAnimX.setDuration(300);
-                    bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
-
-                    ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(holder.btnLike, "scaleY", 0.2F, 1F);
-                    bounceAnimY.setDuration(300);
-                    bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
-                    bounceAnimY.addListener(new AnimatorListenerAdapter() {
-
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                            holder.btnLike.setScaleX(0.2F);
-                            holder.btnLike.setScaleY(0.2F);
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            holder.btnLike.setImageResource(R.drawable.ic_heart_red);
-                        }
-                    });
-
-                    animatorSet.play(rotationAnim);
-                    animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
-
-                    animatorSet.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            resetLikeAnimationState(holder);
-                        }
-                    });
-
-                    animatorSet.start();
-                }
-            } else {
-                holder.btnLike.setImageResource(R.drawable.ic_heart_red);
-            }
-        } else {
-            // Decrease like
-            holder.btnLike.setImageResource(R.drawable.ic_heart_outline_grey);
-        }
     }
 
     private void resetLikeAnimationState(CellFeedViewHolder holder) {
@@ -424,9 +323,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public static class CellFeedViewHolder extends RecyclerView.ViewHolder {
         SquareImageView ivFeedCenter;
         ImageView ivFeedBottom;
-        ImageButton btnComments;
-        ImageButton btnLike;
-        ImageButton btnMore;
         TextSwitcher tsLikesCounter;
         View vBgLike;
         ImageView ivLike;
@@ -440,10 +336,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             super(view);
             ivFeedCenter = (SquareImageView) view.findViewById(R.id.ivFeedCenter);
             ivFeedBottom = (ImageView) view.findViewById(R.id.ivFeedBottom);
-            btnComments = (ImageButton) view.findViewById(R.id.btnComments);
-            btnLike = (ImageButton) view.findViewById(R.id.btnLike);
-            btnMore = (ImageButton) view.findViewById(R.id.btnMore);
-            tsLikesCounter = (TextSwitcher) view.findViewById(R.id.tsLikesCounter);
+
             vBgLike = view.findViewById(R.id.vBgLike);
             ivLike = (ImageView) view.findViewById(R.id.ivLike);
             ivUserProfile = (ImageView) view.findViewById(R.id.ivUserProfile);
