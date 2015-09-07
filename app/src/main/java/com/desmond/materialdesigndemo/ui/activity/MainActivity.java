@@ -79,9 +79,6 @@ public class MainActivity extends BaseDrawerActivity
             mFeedAdapter.updateItems();
         }
 
-        user_name = (TextView)findViewById(R.id.name);
-
-        user_name.setText(new fbUser().getName());
 
 
     }

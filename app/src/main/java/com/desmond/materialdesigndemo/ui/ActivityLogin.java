@@ -125,12 +125,14 @@ public class ActivityLogin extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "Welcome " + response.getJSONObject().get("name").toString() +
                                                     "\n" + response.getJSONObject().get("email").toString(),
                                             Toast.LENGTH_LONG).show();
-                                    fbUser user = new fbUser();
-                                    user.setEmail(response.getJSONObject().get("email").toString());
-                                    user.setName(response.getJSONObject().get("name").toString());
+
+                                    fbUser.email= (response.getJSONObject().get("email").toString());
+                                    fbUser.name = (response.getJSONObject().get("name").toString());
                                     // set profile information
                                     String id = response.getJSONObject().get("id").toString();
-                                    user.setImageUri(" https://graph.facebook.com/" + id + "/picture?type=small");
+                                   String JSONImgurl =  "https://graph.facebook.com/"+id+"/?fields=picture.type(large)";
+
+                                    fbUser.imageUri = "https://graph.facebook.com/"+id+"/?fields=picture.type(large)";
                                     startActivity(new Intent(ActivityLogin.this, MainActivity.class));
                                 } catch (JSONException e) {
                                     e.printStackTrace();

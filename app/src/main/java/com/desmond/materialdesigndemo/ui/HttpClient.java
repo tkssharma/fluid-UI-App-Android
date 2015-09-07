@@ -5,7 +5,7 @@ package com.desmond.materialdesigndemo.ui;
 import com.loopj.android.http.*;
 
 public class HttpClient {
-    private static final String BASE_URL = "http://10.0.2.2/Android";
+    private static final String BASE_URL = "";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 

@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.desmond.materialdesigndemo.R;
+import com.desmond.materialdesigndemo.ui.Handler.UserImageHandler;
+import com.desmond.materialdesigndemo.ui.fbUser;
 import com.desmond.materialdesigndemo.ui.utils.CircleTransformation;
 import com.squareup.picasso.Picasso;
 
@@ -54,9 +56,9 @@ public class BaseDrawerActivity extends BaseActivity {
 
     private void setupHeader() {
         mAvatarSize = getResources().getDimensionPixelSize(R.dimen.global_menu_avatar_size);
-        mProfilePhotos = getString(R.string.user_profile_photo);
+
         Picasso.with(this)
-                .load(mProfilePhotos)
+                .load(new UserImageHandler().getProfileImageUrl(fbUser.imageUri))
                 .placeholder(R.drawable.img_circle_placeholder)
                 .resize(mAvatarSize, mAvatarSize)
                 .centerCrop()
