@@ -1,6 +1,9 @@
 package com.desmond.materialdesigndemo.ui.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewCompat;
@@ -19,6 +22,18 @@ import com.desmond.materialdesigndemo.ui.fbUser;
 import com.desmond.materialdesigndemo.ui.utils.CircleTransformation;
 import com.desmond.materialdesigndemo.ui.view.RevealBackgroundView;
 import com.squareup.picasso.Picasso;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 public class UserProfileActivity extends BaseActivity implements RevealBackgroundView.OnStateChangeListener {
 
@@ -60,14 +75,7 @@ public class UserProfileActivity extends BaseActivity implements RevealBackgroun
         mAvatarSize = getResources().getDimensionPixelSize(R.dimen.user_profile_avatar_size);
         mProfilePhoto = getString(R.string.user_profile_photo);
         mIvUserProfilePhoto = (ImageView) findViewById(R.id.ivUserProfilePhoto);
-        Picasso.with(this)
-                .load(new fbUser().getImageUri().toString())
-                .resize(mAvatarSize, mAvatarSize)
-                .placeholder(R.drawable.img_circle_placeholder)
-                .transform(new CircleTransformation())
-                .centerCrop()
-                .into(mIvUserProfilePhoto);
-
+        new RetrieveFeedTask().execute((new fbUser().getImageUri()));
 
         mVUserProfileRoot = findViewById(R.id.vUserProfileRoot);
         mVUserDetails = findViewById(R.id.vUserDetails);
@@ -159,5 +167,43 @@ public class UserProfileActivity extends BaseActivity implements RevealBackgroun
         ViewCompat.animate(mIvUserProfilePhoto).translationY(0F).setDuration(300).setStartDelay(100).setInterpolator(INTERPOLATOR);
         ViewCompat.animate(mVUserDetails).translationY(0F).setDuration(300).setStartDelay(200).setInterpolator(INTERPOLATOR);
         ViewCompat.animate(mVUserStats).alpha(1F).setDuration(200).setStartDelay(400).setInterpolator(INTERPOLATOR);
+    }
+
+    class RetrieveFeedTask extends AsyncTask<String, Void, Bitmap> {
+
+        private Exception exception;
+
+        protected Bitmap doInBackground(String... urls) {
+            Bitmap bitmap=null;
+            final String nomimg = urls[0];
+            URL imageURL = null;
+
+            try {
+                imageURL = new URL(nomimg);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                HttpURLConnection connection = (HttpURLConnection) imageURL.openConnection();
+                connection.setDoInput(true);
+                connection.setInstanceFollowRedirects( true );
+                connection.connect();
+                InputStream inputStream = connection.getInputStream();
+                //img_value.openConnection().setInstanceFollowRedirects(true).getInputStream()
+                bitmap = BitmapFactory.decodeStream(inputStream);
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        protected void onPostExecute(Bitmap feed) {
+            // TODO: check this.exception
+            // TODO: do something with the feed
+            mIvUserProfilePhoto.setImageBitmap(feed);
+        }
     }
 }

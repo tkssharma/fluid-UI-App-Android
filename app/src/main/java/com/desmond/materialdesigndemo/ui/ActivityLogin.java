@@ -3,6 +3,8 @@ package com.desmond.materialdesigndemo.ui;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,6 +43,9 @@ import org.json.JSONObject;
 
 import com.desmond.materialdesigndemo.ui.Handler.SessionManager;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 
 import butterknife.ButterKnife;
@@ -130,6 +135,7 @@ public class ActivityLogin extends AppCompatActivity {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -147,7 +153,6 @@ public class ActivityLogin extends AppCompatActivity {
             @Override
             public void onError(FacebookException exception) {
                 // App code
-                Toast.makeText(mContext, "Facebook error!", Toast.LENGTH_LONG).show();
                 Toast.makeText(mContext, "Facebook error!", Toast.LENGTH_LONG).show();
             }
         });
@@ -178,13 +183,13 @@ public class ActivityLogin extends AppCompatActivity {
                 public void run() {
                     Intent i = new Intent(ActivityLogin.this, MainActivity.class);
                     startActivity(i);
-
                     finish();
                 }
             }, 5000);
         } else {
         }
     }
+
 
     @Override
     protected void onDestroy() {
