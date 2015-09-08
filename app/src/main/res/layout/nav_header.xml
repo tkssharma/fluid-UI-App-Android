@@ -15,7 +15,8 @@
             android:id="@+id/ivMenuUserProfilePhoto"
             android:layout_width="@dimen/global_menu_avatar_size"
             android:layout_height="@dimen/global_menu_avatar_size"
-            android:layout_margin="12dp" />
+            android:layout_margin="12dp"
+            android:src="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/name"

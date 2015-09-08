@@ -2,10 +2,10 @@ package com.desmond.materialdesigndemo.ui.activity;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +15,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -27,15 +26,15 @@ import android.widget.TextView;
 import com.desmond.materialdesigndemo.R;
 import com.desmond.materialdesigndemo.ui.Handler.SQLiteHandler;
 import com.desmond.materialdesigndemo.ui.Mainfragment;
-import com.desmond.materialdesigndemo.ui.fbUser;
 import com.desmond.materialdesigndemo.ui.view.FeedContextMenu;
-import com.squareup.picasso.Picasso;
 
 
-public class MainActivity extends AppCompatActivity implements FeedContextMenu.OnFeedContextMenuItemClickListener {
+public class MainActivity extends BaseActivity implements FeedContextMenu.OnFeedContextMenuItemClickListener {
 
     public static final String MOVIE_DETAIL_KEY = "movie";
     private static final String TAG = MainActivity.class.getSimpleName();
+    TextView username;
+    ImageView mIvMenuUserProfilePhoto;
     private SQLiteHandler db;
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
@@ -44,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements FeedContextMenu.O
     private Context mContext;
     private TextView userName;
     private ImageView profileimg;
-
+    private int mAvatarSize;
+    private String mProfilePhotos;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,26 +60,22 @@ public class MainActivity extends AppCompatActivity implements FeedContextMenu.O
         db = new SQLiteHandler(mContext);
         // Tie DrawerLayout events to the ActionBarToggle
         mDrawer.setDrawerListener(drawerToggle);
-
+        setupToolbar();
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white);
+        }
+        setupHeader();
         // Find our drawer view
         // Find our drawer view
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
         // Setup drawer view
         setupDrawerContent(nvDrawer);
         // Set the menu icon instead of the launcher icon.
-        final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu_white);
-
-
-        ab.setDisplayHomeAsUpEnabled(true);
-        userName = (TextView) findViewById(R.id.name);
-        profileimg = (ImageView) findViewById(R.id.ivMenuUserProfilePhoto);
-        userName.setText(fbUser.name);
-        Picasso.with(this)
-                .load(fbUser.imageUri)
-                .into(profileimg);
         // Load a default fragments on main screen
-        setUpListerner();
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Mainfragment fragment = new Mainfragment();
@@ -88,15 +84,27 @@ public class MainActivity extends AppCompatActivity implements FeedContextMenu.O
 
     }
 
-    public void setUpListerner() {
-        profileimg.setOnClickListener(new View.OnClickListener() {
+
+    private void setupHeader() {
+        mAvatarSize = getResources().getDimensionPixelSize(R.dimen.global_menu_avatar_size);
+
+        findViewById(R.id.vGlobalMenuHeader).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, UserProfileActivity.class));
+            public void onClick(final View v) {
+                mDrawer.closeDrawers();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        int[] startingLocation = new int[2];
+                        v.getLocationOnScreen(startingLocation);
+                        startingLocation[0] += v.getWidth() / 2;
+                        UserProfileActivity.startUserProfileFromLocation(startingLocation, MainActivity.this);
+                        overridePendingTransition(0, 0);
+                    }
+                }, 200);
             }
         });
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

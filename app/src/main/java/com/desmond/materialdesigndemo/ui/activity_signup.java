@@ -3,8 +3,8 @@ package com.desmond.materialdesigndemo.ui;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,29 +13,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import org.apache.http.Header;
 
 import com.desmond.materialdesigndemo.R;
+import com.desmond.materialdesigndemo.ui.Handler.SQLiteHandler;
+import com.desmond.materialdesigndemo.ui.Handler.SessionManager;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-
-
+import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.desmond.materialdesigndemo.ui.Handler.SQLiteHandler;
-import com.desmond.materialdesigndemo.ui.Handler.SessionManager;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class activity_signup extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
-
-    private SessionManager session;
-    private SQLiteHandler db;
-    private Context mContext;
     @InjectView(com.desmond.materialdesigndemo.R.id.input_name)
     EditText _nameText;
     @InjectView(com.desmond.materialdesigndemo.R.id.input_email) EditText _emailText;
@@ -44,6 +38,9 @@ public class activity_signup extends AppCompatActivity {
     Button _signupButton;
     @InjectView(com.desmond.materialdesigndemo.R.id.link_login)
     TextView _loginLink;
+    private SessionManager session;
+    private SQLiteHandler db;
+    private Context mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

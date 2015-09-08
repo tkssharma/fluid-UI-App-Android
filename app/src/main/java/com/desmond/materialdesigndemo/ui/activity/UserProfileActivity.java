@@ -3,9 +3,9 @@ package com.desmond.materialdesigndemo.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
@@ -66,7 +66,7 @@ public class UserProfileActivity extends BaseActivity implements RevealBackgroun
 
 
         Picasso.with(this)
-                .load( fbUser.imageUri)
+                .load(fbUser.imageUri)
                 .into(mIvUserProfilePhoto);
 
         FirstName = (TextView) findViewById(R.id.FirstName);
@@ -76,21 +76,30 @@ public class UserProfileActivity extends BaseActivity implements RevealBackgroun
         Work.setText(fbUser.email);
         LastName.setText(fbUser.gender);
 
-
         setupToolbar();
-        setupTabs();
-        setupUserProfileGrid();
-        // setupRevealBackground(savedInstanceState);
+        // setupTabs();
+
+        setupRevealBackground(savedInstanceState);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            //actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white);
+        }
     }
 
-    private void setupTabs() {
-        mTlUserProfileTabs = (TabLayout) findViewById(R.id.tlUserProfileTabs);
-
-        mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_grid_on_white));
-        mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_list_white));
-        mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_place_white));
-        mTlUserProfileTabs.addTab(mTlUserProfileTabs.newTab().setIcon(R.drawable.ic_label_white));
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
+
 
     private void setupRevealBackground(Bundle savedInstanceState) {
         mRevealBackground = (RevealBackgroundView) findViewById(R.id.vRevealBackground);
@@ -112,52 +121,9 @@ public class UserProfileActivity extends BaseActivity implements RevealBackgroun
         }
     }
 
-    private void setupUserProfileGrid() {
-        mRvUserProfile = (RecyclerView) findViewById(R.id.rvUserProfile);
-        final StaggeredGridLayoutManager layoutMgr =
-                new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
-        mRvUserProfile.setLayoutManager(layoutMgr);
-
-    }
 
     @Override
     public void onStateChange(int state) {
-        if (RevealBackgroundView.STATE_FINISHED == state) {
-            // Finished reveal animation
-            mRvUserProfile.setVisibility(View.VISIBLE);
-            mVUserProfileRoot.setVisibility(View.VISIBLE);
-            mTlUserProfileTabs.setVisibility(View.VISIBLE);
 
-
-            animateUserProfileOptions();
-            animateUserProfileHeader();
-        } else {
-            // Reveal animation has started
-            mRvUserProfile.setVisibility(View.INVISIBLE);
-            mVUserProfileRoot.setVisibility(View.INVISIBLE);
-            mTlUserProfileTabs.setVisibility(View.INVISIBLE);
-        }
     }
-
-    private void animateUserProfileOptions() {
-        mTlUserProfileTabs.setTranslationY(-mTlUserProfileTabs.getTranslationY());
-        ViewCompat.animate(mTlUserProfileTabs)
-                .translationY(0F)
-                .setDuration(300)
-                .setStartDelay(USER_OPTIONS_ANIMATION_DELAY)
-                .setInterpolator(INTERPOLATOR);
-    }
-
-    private void animateUserProfileHeader() {
-        mVUserProfileRoot.setTranslationY(-mVUserProfileRoot.getHeight());
-        mIvUserProfilePhoto.setTranslationY(-mIvUserProfilePhoto.getHeight());
-        mVUserDetails.setTranslationY(-mVUserDetails.getHeight());
-
-        ViewCompat.animate(mVUserProfileRoot).translationY(0F).setDuration(300).setInterpolator(INTERPOLATOR);
-        ViewCompat.animate(mIvUserProfilePhoto).translationY(0F).setDuration(300).setStartDelay(100).setInterpolator(INTERPOLATOR);
-        ViewCompat.animate(mVUserDetails).translationY(0F).setDuration(300).setStartDelay(200).setInterpolator(INTERPOLATOR);
-        ViewCompat.animate(mVUserStats).alpha(1F).setDuration(200).setStartDelay(400).setInterpolator(INTERPOLATOR);
-    }
-
-
 }

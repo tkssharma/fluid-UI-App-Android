@@ -1,6 +1,5 @@
 package com.desmond.materialdesigndemo.ui.activity;
 
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -11,10 +10,9 @@ import com.desmond.materialdesigndemo.R;
 
 public class BaseActivity extends AppCompatActivity {
 
-    Toolbar mToolBar;
     ImageView mIvLogo;
-
     MenuItem mInboxMenuItem;
+    private Toolbar toolbar;
 
     @Override
     public void setContentView(int layoutResID) {
@@ -29,49 +27,24 @@ public class BaseActivity extends AppCompatActivity {
         return true;
     }
 
+    protected void setupToolbar() {
+        // Fetch the data remotely
+        if (toolbar == null) {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        }
+        setSupportActionBar(toolbar);
+
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            pressHomeButton();
+            //pressHomeButton();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    protected void setupToolbar() {
-        if (mToolBar == null) {
-            mToolBar = (Toolbar) findViewById(R.id.toolbar);
-            mIvLogo = (ImageView) findViewById(R.id.ivLogo);
-        }
 
-        setSupportActionBar(mToolBar);
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    public Toolbar getToolbar() {
-        return mToolBar;
-    }
-
-    public MenuItem getInboxMenuItem() {
-        return mInboxMenuItem;
-    }
-
-    public ImageView getIvLogo() {
-        return mIvLogo;
-    }
-
-    protected void pressHomeButton() {
-        int fragmentCount = getSupportFragmentManager().getBackStackEntryCount();
-        if (fragmentCount == 0) {
-            finish();
-        } else {
-            getSupportFragmentManager().popBackStack();
-        }
-    }
 }
