@@ -2,6 +2,7 @@ package com.desmond.materialdesigndemo.ui.activity;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements FeedContextMenu.O
                 .load(fbUser.imageUri)
                 .into(profileimg);
         // Load a default fragments on main screen
+        setUpListerner();
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Mainfragment fragment = new Mainfragment();
@@ -85,6 +88,14 @@ public class MainActivity extends AppCompatActivity implements FeedContextMenu.O
 
     }
 
+    public void setUpListerner() {
+        profileimg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, UserProfileActivity.class));
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

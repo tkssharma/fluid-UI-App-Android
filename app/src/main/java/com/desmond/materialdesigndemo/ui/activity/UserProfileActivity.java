@@ -80,7 +80,7 @@ public class UserProfileActivity extends BaseActivity implements RevealBackgroun
         setupToolbar();
         setupTabs();
         setupUserProfileGrid();
-        setupRevealBackground(savedInstanceState);
+        // setupRevealBackground(savedInstanceState);
     }
 
     private void setupTabs() {
