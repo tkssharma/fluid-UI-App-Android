@@ -73,9 +73,24 @@ public class ActivityLogin extends AppCompatActivity {
         setContentView(com.desmond.materialdesigndemo.R.layout.activity_login);
         ButterKnife.inject(this);
         mContext = this;
+        updateWithToken(AccessToken.getCurrentAccessToken());
         final ProgressDialog progressDialog = new ProgressDialog(ActivityLogin.this,
                 R.style.Base_Theme_AppCompat_Dialog_Alert);
+        mAccessTokenTracker = new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken accessToken, AccessToken accessToken1) {
+                updateWithToken(accessToken1);
+            }
+        };
 
+        mprofileTraker = new ProfileTracker() {
+            @Override
+            protected void onCurrentProfileChanged(Profile old, Profile newprofi) {
+
+            }
+        };
+        mprofileTraker.startTracking();
+        mAccessTokenTracker.startTracking();
         _loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,21 +163,7 @@ public class ActivityLogin extends AppCompatActivity {
             }
         });
 
-        mAccessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken accessToken, AccessToken accessToken1) {
-                updateWithToken(accessToken1);
-            }
-        };
 
-        mprofileTraker = new ProfileTracker() {
-            @Override
-            protected void onCurrentProfileChanged(Profile old, Profile newprofi) {
-
-            }
-        };
-        mprofileTraker.startTracking();
-        mAccessTokenTracker.startTracking();
     }
 
     private void updateWithToken(AccessToken currentAccessToken) {
