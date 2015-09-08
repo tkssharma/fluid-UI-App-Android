@@ -82,9 +82,9 @@ public class UserProfileActivity extends BaseActivity implements RevealBackgroun
         mVUserProfileRoot = findViewById(R.id.vUserProfileRoot);
         mVUserDetails = findViewById(R.id.vUserDetails);
 
-        Log.d(ARG_REVEAL_START_LOCATION,fbUser.imageUri);
+
         Picasso.with(this)
-                .load( new UserImageHandler().getProfileImageUrl(fbUser.imageUri))
+                .load( fbUser.imageUri)
                 .into(mIvUserProfilePhoto);
 
         FirstName = (TextView) findViewById(R.id.FirstName);

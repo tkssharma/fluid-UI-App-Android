@@ -29,6 +29,7 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
@@ -109,6 +110,10 @@ public class ActivityLogin extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
+
+
+
+
                 GraphRequest request = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(),
                         new GraphRequest.GraphJSONObjectCallback() {
@@ -130,9 +135,23 @@ public class ActivityLogin extends AppCompatActivity {
                                     fbUser.name = (response.getJSONObject().get("name").toString());
                                     // set profile information
                                     String id = response.getJSONObject().get("id").toString();
-                                   String JSONImgurl =  "https://graph.facebook.com/"+id+"/?fields=picture.type(large)";
 
-                                    fbUser.imageUri = "https://graph.facebook.com/"+id+"/?fields=picture.type(large)";
+                                    new GraphRequest(
+                                            AccessToken.getCurrentAccessToken(),
+                                            "/"+id+"/picture",
+                                            null,
+                                            HttpMethod.GET,
+                                            new GraphRequest.Callback() {
+                                                public void onCompleted(GraphResponse response) {
+                                                    try {
+                                                        JSONObject JSONobj =    response.getJSONObject().getJSONObject("data");
+                                                        fbUser.imageUri  =  JSONobj.getString("url");
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }
+                                            }
+                                    ).executeAsync();
                                     startActivity(new Intent(ActivityLogin.this, MainActivity.class));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -145,6 +164,8 @@ public class ActivityLogin extends AppCompatActivity {
                 request.setParameters(parameters);
                 request.executeAsync();
             }
+
+
 
             @Override
             public void onCancel() {

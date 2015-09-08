@@ -58,7 +58,7 @@ public class BaseDrawerActivity extends BaseActivity {
         mAvatarSize = getResources().getDimensionPixelSize(R.dimen.global_menu_avatar_size);
 
         Picasso.with(this)
-                .load(new UserImageHandler().getProfileImageUrl(fbUser.imageUri))
+                .load(fbUser.imageUri)
                 .placeholder(R.drawable.img_circle_placeholder)
                 .resize(mAvatarSize, mAvatarSize)
                 .centerCrop()
