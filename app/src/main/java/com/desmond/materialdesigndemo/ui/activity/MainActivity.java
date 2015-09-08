@@ -31,14 +31,13 @@ public class MainActivity extends BaseDrawerActivity
 
     private static final int ANIM_DURATION_TOOLBAR = 300;
     private static final int ANIM_DURATION_FAB = 400;
-
     CoordinatorLayout mClContent;
-
     TextView user_name;
     ImageView profile;
     FloatingActionButton mFabCreate;
-
     RecyclerView mRvFeed;
+    private int mAvatarSize;
+    private ImageView mIvMenuUserProfilePhoto;
     private FeedAdapter mFeedAdapter;
 
     private boolean mPendingIntroAnimation;
@@ -69,7 +68,11 @@ public class MainActivity extends BaseDrawerActivity
 
         mClContent = (CoordinatorLayout) findViewById(R.id.content);
         mFabCreate = (FloatingActionButton) findViewById(R.id.btnCreate);
-
+        mIvMenuUserProfilePhoto = (ImageView) mNaviView.findViewById(R.id.ivMenuUserProfilePhoto);
+        username.setText(fbUser.name);
+        Picasso.with(this)
+                .load(fbUser.imageUri)
+                .into(mIvMenuUserProfilePhoto);
         setupToolbar();
         setupFeed();
 
@@ -78,7 +81,6 @@ public class MainActivity extends BaseDrawerActivity
         } else {
             mFeedAdapter.updateItems();
         }
-
 
 
     }
@@ -208,7 +210,7 @@ public class MainActivity extends BaseDrawerActivity
         int[] startingLocation = new int[2];
         view.getLocationOnScreen(startingLocation);
         startingLocation[0] += view.getWidth() / 2;
-       // TakePhotoActivity.startCameraFromLocation(startingLocation, MainActivity.this);
+        // TakePhotoActivity.startCameraFromLocation(startingLocation, MainActivity.this);
         overridePendingTransition(0, 0);
     }
 }

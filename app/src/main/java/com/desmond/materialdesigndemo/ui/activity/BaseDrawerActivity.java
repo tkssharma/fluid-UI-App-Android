@@ -11,12 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.desmond.materialdesigndemo.R;
-import com.desmond.materialdesigndemo.ui.Handler.UserImageHandler;
-import com.desmond.materialdesigndemo.ui.fbUser;
-import com.desmond.materialdesigndemo.ui.utils.CircleTransformation;
-import com.squareup.picasso.Picasso;
 
 /**
  * Created by desmond on 2/8/15.
@@ -26,7 +23,7 @@ public class BaseDrawerActivity extends BaseActivity {
     DrawerLayout mDrawerLayout;
     NavigationView mNaviView;
     ActionBarDrawerToggle mDrawerToggle;
-
+    TextView username;
     ImageView mIvMenuUserProfilePhoto;
 
     private int mAvatarSize;
@@ -40,10 +37,11 @@ public class BaseDrawerActivity extends BaseActivity {
 
         mNaviView = (NavigationView) findViewById(R.id.vNavigation);
         mIvMenuUserProfilePhoto = (ImageView) mNaviView.findViewById(R.id.ivMenuUserProfilePhoto);
+        username = (TextView) findViewById(R.id.name);
 
         ViewGroup viewGroup = (ViewGroup) findViewById(R.id.flContentRoot);
         LayoutInflater.from(this).inflate(layoutResID, viewGroup, true);
-
+        setupNaviDrawer();
         setupHeader();
     }
 
@@ -56,14 +54,6 @@ public class BaseDrawerActivity extends BaseActivity {
 
     private void setupHeader() {
         mAvatarSize = getResources().getDimensionPixelSize(R.dimen.global_menu_avatar_size);
-
-        Picasso.with(this)
-                .load(fbUser.imageUri)
-                .placeholder(R.drawable.img_circle_placeholder)
-                .resize(mAvatarSize, mAvatarSize)
-                .centerCrop()
-                .transform(new CircleTransformation())
-                .into(mIvMenuUserProfilePhoto);
 
 
         mNaviView.findViewById(R.id.vGlobalMenuHeader).setOnClickListener(new View.OnClickListener() {
@@ -87,6 +77,7 @@ public class BaseDrawerActivity extends BaseActivity {
     private void setupNaviDrawer() {
         mDrawerToggle = new ActionBarDrawerToggle(
                 BaseDrawerActivity.this, mDrawerLayout, R.string.hello_world, R.string.hello_world);
+
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         mNaviView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {

@@ -1,15 +1,11 @@
 package com.desmond.materialdesigndemo.ui.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
@@ -19,23 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.desmond.materialdesigndemo.R;
-import com.desmond.materialdesigndemo.ui.Handler.UserImageHandler;
 import com.desmond.materialdesigndemo.ui.fbUser;
-import com.desmond.materialdesigndemo.ui.utils.CircleTransformation;
 import com.desmond.materialdesigndemo.ui.view.RevealBackgroundView;
 import com.squareup.picasso.Picasso;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 public class UserProfileActivity extends BaseActivity implements RevealBackgroundView.OnStateChangeListener {
 
@@ -54,7 +36,7 @@ public class UserProfileActivity extends BaseActivity implements RevealBackgroun
     ImageView mIvUserProfilePhoto;
 
     Button mBtnFollow;
-
+    TextView Work;
     View mVUserDetails;
     View mVUserStats;
     View mVUserProfileRoot;
@@ -89,8 +71,10 @@ public class UserProfileActivity extends BaseActivity implements RevealBackgroun
 
         FirstName = (TextView) findViewById(R.id.FirstName);
         LastName = (TextView) findViewById(R.id.LastName);
+        Work = (TextView) findViewById(R.id.work);
         FirstName.setText(fbUser.name);
-        LastName.setText( fbUser.name);
+        Work.setText(fbUser.email);
+        LastName.setText(fbUser.gender);
 
 
         setupToolbar();

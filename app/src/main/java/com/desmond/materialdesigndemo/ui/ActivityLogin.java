@@ -3,11 +3,9 @@ package com.desmond.materialdesigndemo.ui;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,9 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.http.Header;
-
 import com.desmond.materialdesigndemo.R;
+import com.desmond.materialdesigndemo.ui.Handler.SessionManager;
 import com.desmond.materialdesigndemo.ui.activity.MainActivity;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -32,21 +29,16 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.desmond.materialdesigndemo.ui.Handler.SessionManager;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 
 import butterknife.ButterKnife;
@@ -56,13 +48,6 @@ public class ActivityLogin extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
 
     private static final int REQUEST_SIGNUP = 0;
-    private TextView info;
-    private LoginButton loginButton;
-    private CallbackManager callbackManager;
-    private SessionManager session;
-    private Context mContext;
-    private ProfileTracker mprofileTraker;
-    private AccessTokenTracker mAccessTokenTracker;
     @InjectView(com.desmond.materialdesigndemo.R.id.input_email)
     EditText _emailText;
     @InjectView(com.desmond.materialdesigndemo.R.id.input_password)
@@ -71,6 +56,13 @@ public class ActivityLogin extends AppCompatActivity {
     Button _loginButton;
     @InjectView(com.desmond.materialdesigndemo.R.id.link_signup)
     TextView _signupLink;
+    private TextView info;
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
+    private SessionManager session;
+    private Context mContext;
+    private ProfileTracker mprofileTraker;
+    private AccessTokenTracker mAccessTokenTracker;
     private String facebook_id, f_name, m_name, l_name, gender, profile_image, full_name, email_id;
 
     @Override
@@ -110,62 +102,38 @@ public class ActivityLogin extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
-
-
-
-
-                GraphRequest request = GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
+                Bundle params = new Bundle();
+                params.putString("fields", "id,name,email,gender,cover,picture.type(large)");
+                new GraphRequest(AccessToken.getCurrentAccessToken(),
+                        "me",
+                        params,
+                        HttpMethod.GET,
+                        new GraphRequest.Callback() {
                             @Override
-                            public void onCompleted(
-                                    JSONObject object,
-                                    GraphResponse response) {
-
-                                Log.i("LoginActivity", response.toString());
-                                System.out.print(response.toString());
-                                try {
-
-                                    Log.v("Name:", response.getJSONObject().get("name").toString());
-                                    Toast.makeText(getApplicationContext(), "Welcome " + response.getJSONObject().get("name").toString() +
-                                                    "\n" + response.getJSONObject().get("email").toString(),
-                                            Toast.LENGTH_LONG).show();
-
-                                    fbUser.email= (response.getJSONObject().get("email").toString());
-                                    fbUser.name = (response.getJSONObject().get("name").toString());
-                                    // set profile information
-                                    String id = response.getJSONObject().get("id").toString();
-
-                                    new GraphRequest(
-                                            AccessToken.getCurrentAccessToken(),
-                                            "/"+id+"/picture",
-                                            null,
-                                            HttpMethod.GET,
-                                            new GraphRequest.Callback() {
-                                                public void onCompleted(GraphResponse response) {
-                                                    try {
-                                                        JSONObject JSONobj =    response.getJSONObject().getJSONObject("data");
-                                                        fbUser.imageUri  =  JSONobj.getString("url");
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-                                            }
-                                    ).executeAsync();
-                                    startActivity(new Intent(ActivityLogin.this, MainActivity.class));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                            public void onCompleted(GraphResponse response) {
+                                if (response != null) {
+                                    try {
+                                        JSONObject data = response.getJSONObject();
+                                        if (data.has("picture")) {
+                                            String profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
+                                            fbUser.imageUri = profilePicUrl;
+                                            Log.v("Name:", data.get("name").toString());
+                                            Toast.makeText(getApplicationContext(), "Welcome " + data.get("name").toString() +
+                                                            "\n" + data.get("email").toString(),
+                                                    Toast.LENGTH_LONG).show();
+                                            fbUser.email = (data.get("email").toString());
+                                            fbUser.name = (data.get("name").toString());
+                                            fbUser.gender = (data.get("gender").toString());
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-
                             }
-                        });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email");
-                request.setParameters(parameters);
-                request.executeAsync();
+                        }).executeAsync();
+                startActivity(new Intent(ActivityLogin.this, MainActivity.class));
+
             }
-
-
 
             @Override
             public void onCancel() {
