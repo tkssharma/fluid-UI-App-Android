@@ -2,10 +2,13 @@
  * Created by tsharma3 on 8/26/2015.
  */
 package com.desmond.materialdesigndemo.ui;
-import com.loopj.android.http.*;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 public class HttpClient {
-    private static final String BASE_URL = "";
+    private static final String BASE_URL = "http://api.androidhive.info/feed/feed.json";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 

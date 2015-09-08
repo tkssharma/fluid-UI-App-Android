@@ -29,6 +29,7 @@ import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -73,7 +74,7 @@ public class ActivityLogin extends AppCompatActivity {
         setContentView(com.desmond.materialdesigndemo.R.layout.activity_login);
         ButterKnife.inject(this);
         mContext = this;
-        updateWithToken(AccessToken.getCurrentAccessToken());
+        //  updateWithToken(AccessToken.getCurrentAccessToken());
         final ProgressDialog progressDialog = new ProgressDialog(ActivityLogin.this,
                 R.style.Base_Theme_AppCompat_Dialog_Alert);
         mAccessTokenTracker = new AccessTokenTracker() {
@@ -168,7 +169,20 @@ public class ActivityLogin extends AppCompatActivity {
 
     private void updateWithToken(AccessToken currentAccessToken) {
 
-        if (currentAccessToken != null) {
+        if (AccessToken.getCurrentAccessToken() == null && com.facebook.Profile.getCurrentProfile() == null) {
+            //Logged in so show the login button
+            loginButton.setVisibility(View.VISIBLE);
+            loginButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//log out
+                    if (LoginManager.getInstance() != null) {
+                        LoginManager.getInstance().logOut();
+                    }
+                    //gotoLogin();
+                }
+            });
+        } else {
             new Handler().postDelayed(new Runnable() {
 
                 @Override
@@ -178,7 +192,6 @@ public class ActivityLogin extends AppCompatActivity {
                     finish();
                 }
             }, 5000);
-        } else {
         }
     }
 
