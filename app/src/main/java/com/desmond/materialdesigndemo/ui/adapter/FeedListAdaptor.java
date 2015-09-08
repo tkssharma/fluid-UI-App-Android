@@ -44,7 +44,7 @@ public class FeedListAdaptor extends ArrayAdapter<FeedItem> {
         name.setText(item.getName());
         timestamp.setText(item.getTimeStamp());
         txtmessage.setText(item.getStatus());
-        Picasso.with(getContext()).load(item.getUrl()).into(coverimage);
+        Picasso.with(getContext()).load(item.getImge()).into(coverimage);
         Picasso.with(getContext()).load(item.getProfilePic()).into(profilePic);
         // Return the completed view to render on screen
         return convertView;

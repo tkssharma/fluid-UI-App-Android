@@ -26,10 +26,11 @@ import com.desmond.materialdesigndemo.R;
 import com.desmond.materialdesigndemo.ui.Handler.SQLiteHandler;
 import com.desmond.materialdesigndemo.ui.Mainfragment;
 import com.desmond.materialdesigndemo.ui.fbUser;
+import com.desmond.materialdesigndemo.ui.view.FeedContextMenu;
 import com.squareup.picasso.Picasso;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FeedContextMenu.OnFeedContextMenuItemClickListener {
 
     public static final String MOVIE_DETAIL_KEY = "movie";
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -197,5 +198,25 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    public void onReportClick(int feedItem) {
+
+    }
+
+    @Override
+    public void onSharePhotoClick(int feedItem) {
+
+    }
+
+    @Override
+    public void onCopyShareUrlClick(int feedItem) {
+
+    }
+
+    @Override
+    public void onCancelClick(int feedItem) {
+
+    }
 }
 

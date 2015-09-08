@@ -50,7 +50,7 @@ public class Mainfragment extends Fragment {
         mFeedItems = (ListView) rootView.findViewById(R.id.FeedItems);
         setupMovieSelectedListener();
 
-
+        fetchBoxOfficeMovies("", "");
         return rootView;
     }
 
